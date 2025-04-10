@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Crypt;
 
 class User extends Authenticatable
 {
@@ -44,5 +45,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function setGoogleTokenAttribute($value)
+    {
+        $this->attributes['google_token'] = $value
+            ? Crypt::encryptString($value)
+            : null;
+    }
+
+    public function getGoogleTokenAttribute($value)
+    {
+        return $value ? Crypt::decryptString($value) : null;
+    }
+
+    public function setGoogleRefreshTokenAttribute($value)
+    {
+        $this->attributes['google_refresh_token'] = $value
+            ? Crypt::encryptString($value)
+            : null;
+    }
+
+    public function getGoogleRefreshTokenAttribute($value)
+    {
+        return $value ? Crypt::decryptString($value) : null;
     }
 }
