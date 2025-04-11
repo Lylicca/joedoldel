@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -34,7 +33,16 @@ class AuthController extends Controller
      */
     public function redirect()
     {
-        return Socialite::driver('google')->redirect();
+        /**
+         * @var \Laravel\Socialite\Contracts\Two\GoogleProvider $provider
+         */
+        $provider = Socialite::driver('google');
+
+        return $provider
+            ->scopes([
+                'https://www.googleapis.com/auth/youtube.force-ssl',
+            ])
+            ->redirect();
     }
 
     /**
@@ -58,10 +66,10 @@ class AuthController extends Controller
                 'email' => $googleUser->getEmail(),
             ]);
         }
-
         $user->update([
-            'google_token' => Crypt::encryptString($googleUser->token),
-            'google_refresh_token' => Crypt::encryptString($googleUser->refreshToken ?? $user->google_refresh_token)
+            'google_token' => $googleUser->token,
+            'google_refresh_token' => $googleUser->refreshToken ?? $user->google_refresh_token,
+            'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn),
         ]);
 
         Auth::login($user, true);

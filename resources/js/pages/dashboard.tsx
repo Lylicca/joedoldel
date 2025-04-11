@@ -1,35 +1,54 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/app-layout';
+import { type Channel } from '@/lib/types';
+import { formatNumber } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Deferred, Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
+  {
+    title: 'Dashboard',
+    href: '/dashboard',
+  },
 ];
 
-export default function Dashboard() {
-    return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
+type PageProps = {
+  channels: Channel[];
+};
+
+export default function Dashboard({ channels }: PageProps) {
+  console.log('channels', channels);
+  return (
+    <AppLayout breadcrumbs={breadcrumbs}>
+      <Head title="Dashboard" />
+
+      <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+        <Deferred
+          data="channels"
+          fallback={
+            <div className="grid h-full w-full place-items-center">
+              <Spinner />
             </div>
-        </AppLayout>
-    );
+          }
+        >
+          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            {channels?.map((channel) => (
+              <div
+                key={channel.id}
+                className="border-sidebar-border/70 dark:border-sidebar-border relative flex items-center gap-4 overflow-hidden rounded-xl border p-2"
+              >
+                <img src={channel.image_url} className="h-full rounded-md" />
+
+                <div>
+                  <h3 className="text-md font-semibold">{channel.name}</h3>
+                  <p className="text-sm text-neutral-600">{formatNumber(channel.subscriber_count, 0)} subs</p>
+                  <p className="text-sm text-neutral-600">{formatNumber(channel.video_count, 0)} videos</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Deferred>
+      </div>
+    </AppLayout>
+  );
 }
