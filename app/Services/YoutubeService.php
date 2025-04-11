@@ -82,6 +82,69 @@ class YoutubeService
   }
 
   /**
+   * Iterator for getting all videos of a channel
+   *
+   * @param string $channelId
+   * @param string $part
+   * @return Generator
+   */
+  public function iterateChannelVideos(string $channelId, string $part = 'snippet,contentDetails'): Generator
+  {
+    $pageToken = null;
+
+    // First get the uploads playlist ID from the channel
+    $channelResponse = $this->makeRequest('GET', 'channels', [
+      'id' => $channelId,
+      'part' => 'contentDetails'
+    ]);
+
+    if (empty($channelResponse['items'])) {
+      throw new Exception('Channel not found');
+    }
+
+    $uploadsPlaylistId = $channelResponse['items'][0]['contentDetails']['relatedPlaylists']['uploads'];
+
+    do {
+      $params = [
+        'playlistId' => $uploadsPlaylistId,
+        'part' => $part,
+        'maxResults' => 50
+      ];
+
+      if ($pageToken) {
+        $params['pageToken'] = $pageToken;
+      }
+
+      $response = $this->makeRequest('GET', 'playlistItems', $params);
+
+      if (!isset($response['items'])) {
+        throw new Exception('Invalid response from YouTube API: ' . json_encode($response));
+      }
+
+      // Get video details
+      $videoIds = array_map(function ($item) {
+        return $item['contentDetails']['videoId'];
+      }, $response['items']);
+
+      $videoDetails = $this->getVideos($videoIds, 'snippet,contentDetails,statistics,status');
+
+      if (!isset($videoDetails['items'])) {
+        throw new Exception('Invalid response from YouTube API: ' . json_encode($videoDetails));
+      }
+
+      $videoDetails = collect($videoDetails['items'])->keyBy('id')->all();
+
+      foreach ($response['items'] as $video) {
+        $video['details'] = $videoDetails[$video['contentDetails']['videoId']] ?? null;
+
+        yield $video;
+      }
+
+      $pageToken = $response['nextPageToken'] ?? null;
+    } while ($pageToken !== null);
+  }
+
+  /**
    * Get video details
    *
    * @param string|array $videoIds Single ID or array of video IDs

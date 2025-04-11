@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type Channel } from '@/lib/types';
 import { formatNumber } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
-import { Deferred, Head } from '@inertiajs/react';
+import { Deferred, Head, Link } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -17,7 +17,6 @@ type PageProps = {
 };
 
 export default function Dashboard({ channels }: PageProps) {
-  console.log('channels', channels);
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Dashboard" />
@@ -33,18 +32,19 @@ export default function Dashboard({ channels }: PageProps) {
         >
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             {channels?.map((channel) => (
-              <div
+              <Link
+                href={route('channels.show', channel.channel_id)}
                 key={channel.id}
                 className="border-sidebar-border/70 dark:border-sidebar-border relative flex items-center gap-4 overflow-hidden rounded-xl border p-2"
               >
-                <img src={channel.image_url} className="h-full rounded-md" />
+                <img src={channel.image_url} className="h-20 rounded-md" />
 
                 <div>
                   <h3 className="text-md font-semibold">{channel.name}</h3>
                   <p className="text-sm text-neutral-600">{formatNumber(channel.subscriber_count, 0)} subs</p>
                   <p className="text-sm text-neutral-600">{formatNumber(channel.video_count, 0)} videos</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </Deferred>

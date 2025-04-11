@@ -10,70 +10,72 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+  /**
+   * Show the login view.
+   */
+  public function login()
+  {
+    return Inertia::render('auth/login');
+  }
+
+  /**
+   * Log the user out of the application.
+   */
+  public function logout()
+  {
+    Auth::logout();
+
+    return redirect()->route('home');
+  }
+
+  /**
+   * Redirect the user to the Google authentication page.
+   */
+  public function redirect()
+  {
     /**
-     * Show the login view.
+     * @var \Laravel\Socialite\Contracts\Two\GoogleProvider $provider
      */
-    public function login()
-    {
-        return Inertia::render('auth/login');
+    $provider = Socialite::driver('google');
+
+    return $provider
+      ->scopes([
+        'https://www.googleapis.com/auth/youtube.force-ssl',
+      ])
+      ->with(['access_type' => 'offline', 'prompt' => 'consent select_account'])
+      ->redirect();
+  }
+
+  /**
+   * Obtain the user information from Google.
+   */
+  public function callback()
+  {
+    try {
+      $googleUser = Socialite::driver('google')->user();
+    } catch (Exception $e) {
+      // Handle error or redirect back with an error message
+      return redirect()->route('login')->with('error', 'Login failed.');
     }
 
-    /**
-     * Log the user out of the application.
-     */
-    public function logout()
-    {
-        Auth::logout();
+    // Check if the user already exists in your database
+    $user = User::where('email', $googleUser->getEmail())->first();
 
-        return redirect()->route('home');
+    if (!$user) {
+      $user = User::create([
+        'name' => $googleUser->getName(),
+        'email' => $googleUser->getEmail(),
+      ]);
     }
 
-    /**
-     * Redirect the user to the Google authentication page.
-     */
-    public function redirect()
-    {
-        /**
-         * @var \Laravel\Socialite\Contracts\Two\GoogleProvider $provider
-         */
-        $provider = Socialite::driver('google');
+    $user->update([
+      'google_token' => $googleUser->token,
+      'google_refresh_token' => $googleUser->refreshToken ?? $user->google_refresh_token,
+      'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn),
+    ]);
 
-        return $provider
-            ->scopes([
-                'https://www.googleapis.com/auth/youtube.force-ssl',
-            ])
-            ->redirect();
-    }
+    Auth::login($user, true);
 
-    /**
-     * Obtain the user information from Google.
-     */
-    public function callback()
-    {
-        try {
-            $googleUser = Socialite::driver('google')->user();
-        } catch (Exception $e) {
-            // Handle error or redirect back with an error message
-            return redirect()->route('login')->with('error', 'Login failed.');
-        }
-
-        // Check if the user already exists in your database
-        $user = User::where('email', $googleUser->getEmail())->first();
-
-        if (!$user) {
-            $user = User::create([
-                'name' => $googleUser->getName(),
-                'email' => $googleUser->getEmail(),
-            ]);
-        }
-        $user->update([
-            'google_token' => $googleUser->token,
-            'google_refresh_token' => $googleUser->refreshToken ?? $user->google_refresh_token,
-            'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn),
-        ]);
-
-        Auth::login($user, true);
-
-        return redirect()->intended('/dashboard');
-    }
+    return redirect()->intended('/dashboard');
+  }
 }
