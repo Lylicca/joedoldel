@@ -25,16 +25,19 @@ class SyncVideoComments
    * Sync comments for a specific video
    *
    * @param string $videoId The YouTube video ID
+   * @param bool $incrementalSync Whether to perform an incremental sync from last position
    * @return array The synced comments
    */
-  public function execute(string $videoId)
+  public function execute(string $videoId, bool $incrementalSync = true)
   {
     $video = Video::where('video_id', $videoId)->firstOrFail();
+    $startPageToken = $incrementalSync ? $video->last_comment_page_token : null;
+    $lastPageToken = null;
 
     try {
       $foundComments = [];
 
-      foreach ($this->service->iterateVideoComments($videoId, 'snippet') as $comment) {
+      foreach ($this->service->iterateVideoComments($videoId, 'snippet', 100, $startPageToken) as $comment) {
         $snippet = $comment['snippet']['topLevelComment']['snippet'];
         $commentId = $comment['id'];
         $foundComments[] = $commentId;
@@ -54,13 +57,21 @@ class SyncVideoComments
             'spam_probability' => $spamProbability
           ]
         );
+
+        // Store the current page token for next incremental sync
+        $lastPageToken = $comment['nextPageToken'] ?? null;
+        if ($lastPageToken) {
+          $video->update(['last_comment_page_token' => $lastPageToken]);
+        }
       }
 
-      // Mark comments that no longer exist as removed
-      Comment::where('video_id', $video->id)
-        ->whereNull('removed_at')
-        ->whereNotIn('comment_id', $foundComments)
-        ->update(['removed_at' => now()]);
+      // Only mark comments as removed during a full sync
+      if (!$incrementalSync) {
+        Comment::where('video_id', $video->id)
+          ->whereNull('removed_at')
+          ->whereNotIn('comment_id', $foundComments)
+          ->update(['removed_at' => now()]);
+      }
     } catch (Exception $e) {
       report($e);
     }

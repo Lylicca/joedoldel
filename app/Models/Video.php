@@ -18,6 +18,7 @@ class Video extends Model
     'comment_count',
     'visibility',
     'livestream_status',
+    'last_comment_page_token',
   ];
 
   protected $casts = [

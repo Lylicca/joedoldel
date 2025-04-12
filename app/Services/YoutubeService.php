@@ -167,12 +167,13 @@ class YoutubeService
    * @param string $videoId
    * @param string $part
    * @param int $batchSize
+   * @param string|null $startPageToken Start fetching from this page token (for incremental sync)
    * @return Generator
    * @throws Exception
    */
-  public function iterateVideoComments(string $videoId, string $part = 'snippet', int $batchSize = 100): Generator
+  public function iterateVideoComments(string $videoId, string $part = 'snippet', int $batchSize = 100, ?string $startPageToken = null): Generator
   {
-    $pageToken = null;
+    $pageToken = $startPageToken;
     $quotaKey = 'youtube_quota_' . date('Y-m-d');
 
     do {
