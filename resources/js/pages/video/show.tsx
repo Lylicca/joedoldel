@@ -5,7 +5,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Comment, Video, type Channel } from '@/lib/types';
 import { cn, formatNumber } from '@/lib/utils';
 import { Deferred, Head, Link, router } from '@inertiajs/react';
-import { AlertCircle, ArrowLeft, ExternalLinkIcon, Info, RefreshCw } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Eraser, ExternalLinkIcon, Info, RefreshCw } from 'lucide-react';
 import Markdown from 'react-markdown';
 
 type PageProps = {
@@ -52,9 +52,26 @@ export default function ChannelDetail({ channel, video, comments }: PageProps) {
               <h2 className="text-xl font-medium">{video.title}</h2>
 
               <div className="flex items-center gap-2">
-                <Button size="icon" variant="secondary" onClick={() => router.post(route('videos.refresh', video.id), { preserveScroll: true })}>
-                  <RefreshCw />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button size="icon" variant="secondary" onClick={() => router.post(route('videos.refresh', video.id), { preserveScroll: true })}>
+                      <RefreshCw />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Refresh comments data</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      onClick={() => router.post(route('videos.purge-spam', video.id), { preserveScroll: true })}
+                    >
+                      <Eraser />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Remove spam comments</TooltipContent>
+                </Tooltip>
                 <a href={`https://youtube.com/watch?v=${video.video_id}`} target="_blank" rel="noopener noreferrer">
                   <Button variant="destructive">
                     Open on Youtube <ExternalLinkIcon />

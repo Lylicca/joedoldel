@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\SyncVideoComments;
+use App\Actions\PurgeHighProbabilitySpam;
 use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,5 +52,25 @@ class VideoController extends Controller
     return redirect()
       ->back()
       ->with('success', 'Comments refreshed successfully.');
+  }
+
+  public function purgeSpam(string $id)
+  {
+    $user = Auth::user();
+    $video = Video::find($id);
+
+    if (!$video) {
+      return redirect()
+        ->back()
+        ->with('error', 'Video not found.');
+    }
+
+    $purged = (new PurgeHighProbabilitySpam($user->google_token))->execute($video->video_id);
+
+    Cache::forget("video_comments_{$video->id}");
+
+    return redirect()
+      ->back()
+      ->with('success', "Successfully removed {$purged} spam comments.");
   }
 }

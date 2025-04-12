@@ -18,6 +18,7 @@ Route::middleware(['auth'])->group(function () {
 
   Route::get('videos/{video}', [VideoController::class, 'show'])->name('videos.show');
   Route::post('videos/{video}', [VideoController::class, 'refresh'])->name('videos.refresh');
+  Route::post('videos/{video}/purge-spam', [VideoController::class, 'purgeSpam'])->name('videos.purge-spam');
 
   Route::delete('comments/{comment}', [CommentController::class, 'destroy'])
     ->name('comments.destroy');

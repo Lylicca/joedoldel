@@ -49,7 +49,6 @@ class TextUtils
         for ($i = 0; $i < strlen($cleanText) - $wordLen + 1; $i++) {
           $chunk = substr($cleanText, $i, $wordLen + 2);
           similar_text($word, $chunk, $percent);
-          Log::debug("Word: $word, Chunk: $chunk, Similarity: $percent");
 
           if ($percent > 75) {  // 80% similarity threshold
             $probability += $weight * ($percent / 100);
