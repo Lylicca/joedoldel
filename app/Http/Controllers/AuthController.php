@@ -41,6 +41,7 @@ class AuthController extends Controller
     return $provider
       ->scopes([
         'https://www.googleapis.com/auth/youtube.force-ssl',
+        'https://www.googleapis.com/auth/youtube',
       ])
       ->with(['access_type' => 'offline', 'prompt' => 'consent select_account'])
       ->redirect();

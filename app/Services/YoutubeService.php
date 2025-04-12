@@ -261,4 +261,65 @@ class YoutubeService
       throw $e;
     }
   }
+
+  /**
+   * Delete a YouTube comment
+   *
+   * @param string $commentId
+   * @return bool
+   * @throws Exception
+   */
+  public function deleteComment(string $commentId): bool
+  {
+    try {
+      $response = Http::withToken($this->accessToken)
+        ->withHeaders([
+          'Accept' => 'application/json',
+        ])
+        ->delete(self::API_BASE_URL . "/comments", [
+          'id' => trim($commentId)
+        ]);
+
+      if ($response->failed()) {
+        dd($response->body(), $commentId);
+        throw new Exception("YouTube API error: {$response->body()}");
+      }
+
+      return $response->successful();
+    } catch (Exception $e) {
+      throw new Exception("Failed to delete comment: " . $e->getMessage());
+    }
+  }
+
+  /**
+   * Set moderation status for a comment
+   *
+   * @param string $commentId
+   * @param string $moderationStatus Can be 'published', 'heldForReview', or 'rejected'
+   * @param bool $banAuthor Whether to ban the comment author
+   * @return bool
+   * @throws Exception
+   */
+  public function setModerationStatus(string $commentId, string $moderationStatus, bool $banAuthor = false): bool
+  {
+    try {
+      $response = Http::withToken($this->accessToken)
+        ->withHeaders([
+          'Accept' => 'application/json',
+        ])
+        ->post(self::API_BASE_URL . "/comments/setModerationStatus", [
+          'id' => trim($commentId),
+          'moderationStatus' => $moderationStatus,
+          'banAuthor' => $banAuthor
+        ]);
+
+      if ($response->failed()) {
+        throw new Exception("YouTube API error: {$response->body()}");
+      }
+
+      return $response->successful();
+    } catch (Exception $e) {
+      throw new Exception("Failed to set moderation status: " . $e->getMessage());
+    }
+  }
 }

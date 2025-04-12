@@ -3,21 +3,9 @@ import { Spinner } from '@/components/ui/spinner';
 import AppLayout from '@/layouts/app-layout';
 import { Video, type Channel } from '@/lib/types';
 import { cn, formatNumber } from '@/lib/utils';
-import { type BreadcrumbItem } from '@/types';
 import { Deferred, Head, Link } from '@inertiajs/react';
 import { ExternalLinkIcon, MessageCircleMoreIcon } from 'lucide-react';
 import { DateTime } from 'luxon';
-
-const breadcrumbs: BreadcrumbItem[] = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-  },
-  {
-    title: 'Channel',
-    href: '#',
-  },
-];
 
 type PageProps = {
   channel: Channel;
@@ -26,7 +14,18 @@ type PageProps = {
 
 export default function ChannelDetail({ channel, videos }: PageProps) {
   return (
-    <AppLayout breadcrumbs={breadcrumbs}>
+    <AppLayout
+      breadcrumbs={[
+        {
+          title: 'Dashboard',
+          href: '/dashboard',
+        },
+        {
+          title: `${channel.name}'s Channel`,
+          href: '#',
+        },
+      ]}
+    >
       <Head title="Dashboard" />
 
       <div className="flex h-full flex-1 flex-col gap-4 rounded-xl">
@@ -60,7 +59,7 @@ export default function ChannelDetail({ channel, videos }: PageProps) {
           <section className="grid grid-cols-3 gap-4 p-4">
             {videos?.map((video) => (
               <Link
-                href={'#'}
+                href={route('videos.show', { video: video.video_id })}
                 key={video.id}
                 className={cn('group flex flex-col gap-2', video.visibility !== 'public' && 'opacity-50 transition hover:opacity-100')}
               >

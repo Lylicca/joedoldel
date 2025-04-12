@@ -2,64 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\SyncVideoComments;
+use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class VideoController extends Controller
 {
-  /**
-   * Display a listing of the resource.
-   */
-  public function index()
-  {
-    return Inertia::render('video/show');
-  }
-
-  /**
-   * Show the form for creating a new resource.
-   */
-  public function create()
-  {
-    //
-  }
-
-  /**
-   * Store a newly created resource in storage.
-   */
-  public function store(Request $request)
-  {
-    //
-  }
-
-  /**
-   * Display the specified resource.
-   */
   public function show(string $id)
   {
-    //
+    $user = Auth::user();
+    $video = Video::where('video_id', $id)
+      ->with('channel')
+      ->firstOrFail();
+
+    return Inertia::render('video/show', [
+      'video' => $video,
+      'channel' => $video->channel,
+      'comments' => Inertia::defer(function () use ($video, $user) {
+        Cache::remember(
+          "video_comments_{$video->id}",
+          now()->addMinutes(30),
+          fn() => new SyncVideoComments($user->google_token)->execute($video->video_id)
+        );
+
+        return $video->comments()
+          ->where('removed_at', null)
+          ->orderBy('spam_probability', 'desc')
+          ->orderBy('published_at', 'desc')
+          ->get();
+      }),
+    ]);
   }
 
-  /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(string $id)
+  public function refresh(string $id)
   {
-    //
-  }
+    $video = Video::find($id);
+    if (!$video) {
+      return redirect()
+        ->back()
+        ->with('error', 'Video not found.');
+    }
 
-  /**
-   * Update the specified resource in storage.
-   */
-  public function update(Request $request, string $id)
-  {
-    //
-  }
+    Cache::forget("video_comments_{$video->id}");
 
-  /**
-   * Remove the specified resource from storage.
-   */
-  public function destroy(string $id)
-  {
-    //
+    return redirect()
+      ->back()
+      ->with('success', 'Comments refreshed successfully.');
   }
 }

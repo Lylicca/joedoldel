@@ -26,3 +26,18 @@ export type Video = {
   visibility: 'public' | 'private' | 'unlisted';
   livestream_status: 'live' | 'upcoming' | 'none';
 };
+
+export type Comment = {
+  author_channel_id: string;
+  author_name: string;
+  comment_id: string;
+  created_at: string;
+  id: number;
+  like_count: number;
+  published_at: string;
+  removed_at: string | null;
+  spam_probability: number;
+  text: string;
+  updated_at: string;
+  video_id: number;
+};

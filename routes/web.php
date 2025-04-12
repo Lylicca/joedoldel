@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
@@ -13,11 +14,13 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
   Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+  Route::get('channels/{channel}', [ChannelController::class, 'show'])->name('channels.show');
 
-  Route::group(['prefix' => 'channels/{channel}'], function () {
-    Route::get('/', [ChannelController::class, 'show'])->name('channels.show');
-    Route::resource('videos', VideoController::class)->only(['index', 'show']);
-  });
+  Route::get('videos/{video}', [VideoController::class, 'show'])->name('videos.show');
+  Route::post('videos/{video}', [VideoController::class, 'refresh'])->name('videos.refresh');
+
+  Route::delete('comments/{comment}', [CommentController::class, 'destroy'])
+    ->name('comments.destroy');
 });
 
 Route::get('login', [AuthController::class, 'login'])->name('login');

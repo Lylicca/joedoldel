@@ -35,6 +35,7 @@ class RefreshGoogleToken
           ->stateless()
           ->scopes([
             'https://www.googleapis.com/auth/youtube.force-ssl',
+            'https://www.googleapis.com/auth/youtube',
           ])
           ->with(['access_type' => 'offline'])
           ->refreshToken($user->google_refresh_token);
