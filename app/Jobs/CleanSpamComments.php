@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Actions\PurgeHighProbabilitySpam;
 use App\Models\CleanupStatistics;
+use App\Models\CleanupStatisticsDetail;
 use App\Models\Video;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -40,6 +41,14 @@ class CleanSpamComments implements ShouldQueue
       $stats->increment('comments_processed', $total);
       $stats->increment('spam_removed', $takenDownComment);
       $stats->increment('comments_held_for_review', $heldForReviewComment);
+
+      CleanupStatisticsDetail::create([
+        'cleanup_statistics_id' => $this->cleanupStatsId,
+        'video_id' => $video->id,
+        'comments_processed' => $total,
+        'spam_removed' => $takenDownComment,
+        'comments_held_for_review' => $heldForReviewComment,
+      ]);
     }
   }
 }

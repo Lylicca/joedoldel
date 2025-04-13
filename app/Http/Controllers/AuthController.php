@@ -15,7 +15,12 @@ class AuthController extends Controller
    */
   public function login()
   {
-    return Inertia::render('auth/login');
+    if (Auth::check()) {
+      return redirect()->intended('/dashboard');
+    }
+
+    return redirect()->route('google.login');
+    // return Inertia::render('auth/login');
   }
 
   /**
