@@ -15,6 +15,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
   Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
   Route::get('channels/{channel}', [ChannelController::class, 'show'])->name('channels.show');
+  Route::post('channels/{channel}', [ChannelController::class, 'refresh'])->name('channels.refresh');
 
   Route::get('videos/{video}', [VideoController::class, 'show'])->name('videos.show');
   Route::post('videos/{video}', [VideoController::class, 'refresh'])->name('videos.refresh');

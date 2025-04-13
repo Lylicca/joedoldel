@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
 import { Video, type Channel } from '@/lib/types';
 import { cn, formatNumber } from '@/lib/utils';
-import { Deferred, Head, Link } from '@inertiajs/react';
-import { ExternalLinkIcon, MessageCircleMoreIcon } from 'lucide-react';
+import { Deferred, Head, Link, router } from '@inertiajs/react';
+import { ExternalLinkIcon, MessageCircleMoreIcon, RefreshCw } from 'lucide-react';
 import { DateTime } from 'luxon';
 
 type PageProps = {
@@ -40,11 +41,25 @@ export default function ChannelDetail({ channel, videos }: PageProps) {
               <p className="text-sm text-neutral-500">{formatNumber(channel.subscriber_count, 0)} subscribers</p>
             </div>
 
-            <a href={`https://www.youtube.com/channel/${channel.channel_id}`} target="_blank" rel="noopener noreferrer">
-              <Button variant="destructive">
-                Go to channel <ExternalLinkIcon />
-              </Button>
-            </a>
+            <div className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    onClick={() => router.post(route('channels.refresh', channel.id), { preserveScroll: true })}
+                  >
+                    <RefreshCw />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Refresh channel data</TooltipContent>
+              </Tooltip>
+              <a href={`https://www.youtube.com/channel/${channel.channel_id}`} target="_blank" rel="noopener noreferrer">
+                <Button variant="destructive">
+                  Go to channel <ExternalLinkIcon />
+                </Button>
+              </a>
+            </div>
           </section>
         </header>
 

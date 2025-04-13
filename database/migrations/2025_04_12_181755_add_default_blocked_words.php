@@ -16,7 +16,6 @@ return new class extends Migration
       'gacor',
       'casino',
       'poker',
-      'bet',
       'judi',
       'togel',
       'slot',

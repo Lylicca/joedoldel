@@ -27,9 +27,7 @@ class SyncChannelVideos
    */
   public function execute(string $channelId)
   {
-    $channel = Channel::where('channel_id', $channelId)
-      ->where('user_id', Auth::id())
-      ->firstOrFail();
+    $channel = Channel::where('channel_id', $channelId)->firstOrFail();
 
     foreach ($this->service->iterateChannelVideos($channelId) as $video) {
       $videoId = $video['snippet']['resourceId']['videoId'];

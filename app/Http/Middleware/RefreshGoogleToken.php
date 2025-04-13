@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Actions\RefreshGoogleCredentials;
 use Closure;
 use Carbon\Carbon;
 use App\Models\User;
@@ -27,26 +28,8 @@ class RefreshGoogleToken
       Carbon::parse($user->google_token_expires_at)->subMinutes(5)->isPast()
     ) {
       try {
-        /**
-         * @var \Laravel\Socialite\Contracts\Two\GoogleProvider $provider
-         */
-        $provider = Socialite::driver('google');
-        $creds = $provider
-          ->stateless()
-          ->scopes([
-            'https://www.googleapis.com/auth/youtube.force-ssl',
-            'https://www.googleapis.com/auth/youtube',
-          ])
-          ->with(['access_type' => 'offline'])
-          ->refreshToken($user->google_refresh_token);
-
-        if ($creds->refreshToken) {
-          $user->update([
-            'google_token' => $creds->token,
-            'google_refresh_token' => $creds->refreshToken,
-            'google_token_expires_at' => now()->addSeconds($creds->expiresIn),
-          ]);
-        }
+        $action = new RefreshGoogleCredentials();
+        $action->execute($user);
       } catch (\Exception $e) {
         // If refresh fails, we'll let the request continue and let the application
         // handle any auth errors that might occur

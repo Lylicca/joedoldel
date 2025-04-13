@@ -38,4 +38,13 @@ class ChannelController extends Controller
       }),
     ]);
   }
+
+  public function refresh(string $channel)
+  {
+    $channel = Channel::findOrFail($channel);
+
+    Cache::forget("channel.{$channel->id}.videos");
+
+    return redirect()->back()->with('success', 'Channel videos refreshed successfully.');
+  }
 }

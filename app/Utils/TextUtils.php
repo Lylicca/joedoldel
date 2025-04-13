@@ -26,18 +26,17 @@ class TextUtils
     $normalizedText = Normalizer::normalize($text, Normalizer::NFKD);
 
     if ($text !== $normalizedText) {
-      $probability += 0.2;
+      // Big chance of spam if the text has diacritics/special characters.
+      $probability += 0.25;
     }
 
     $normalizedText = preg_replace('/\p{Mn}/u', '', $normalizedText);
     $normalizedText = strtolower($normalizedText);
 
-    $cleanText = preg_replace('/[^a-z0-9]/', '', $normalizedText);
-
     $blockedWords = self::getBlockedWords();
     foreach ($blockedWords as $word => $weight) {
       // First try exact match
-      if (strpos($cleanText, $word) !== false) {
+      if (strpos($normalizedText, $word) !== false) {
         $probability += $weight;
         continue;
       }
@@ -46,11 +45,11 @@ class TextUtils
       if (strlen($word) > 3) {
         $wordLen = strlen($word);
         // Check text in chunks similar to word length
-        for ($i = 0; $i < strlen($cleanText) - $wordLen + 1; $i++) {
-          $chunk = substr($cleanText, $i, $wordLen + 2);
+        for ($i = 0; $i < strlen($normalizedText) - $wordLen + 1; $i++) {
+          $chunk = substr($normalizedText, $i, $wordLen + 2);
           similar_text($word, $chunk, $percent);
 
-          if ($percent > 75) {  // 80% similarity threshold
+          if ($percent > 80) {  // 80% similarity threshold
             $probability += $weight * ($percent / 100);
             break;
           }

@@ -24,10 +24,21 @@ class PurgeHighProbabilitySpam
       ->where('removed_at', null)
       ->get();
 
-    DB::transaction(function () use ($comments) {
+    $takenDownComment = 0;
+    $heldForReviewComment = 0;
+
+    DB::transaction(function () use ($comments, &$takenDownComment, &$heldForReviewComment) {
       foreach ($comments as $comment) {
+        $rejected = $comment->spam_probability >= 0.8;
+
+        if ($rejected) {
+          $takenDownComment++;
+        } else {
+          $heldForReviewComment++;
+        }
+
         // Delete the comment from YouTube
-        $this->service->setModerationStatus($comment->comment_id, $comment->spam_probability >= 0.8 ? 'rejected' : 'heldForReview');
+        $this->service->setModerationStatus($comment->comment_id, $rejected ? 'rejected' : 'heldForReview');
       }
 
       // Mark the comments as removed in the database
@@ -35,6 +46,11 @@ class PurgeHighProbabilitySpam
         ->update(['removed_at' => now()]);
     });
 
-    return count($comments);
+    return [
+      'taken_down' => $takenDownComment,
+      'held_for_review' => $heldForReviewComment,
+      'total' => $comments->count(),
+      'video_id' => $videoId
+    ];
   }
 }
