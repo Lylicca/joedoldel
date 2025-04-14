@@ -21,3 +21,5 @@ Schedule::job(new SyncCommentsFromVideos)
   ->name('sync-comments')
   ->onOneServer()
   ->withoutOverlapping();
+
+Schedule::command('telescope:prune')->daily();
