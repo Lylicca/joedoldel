@@ -160,7 +160,7 @@ export default function Welcome() {
             <Link className="text-xs underline-offset-4 hover:underline" href="#">
               Kebijakan Privasi
             </Link> */}
-            <Link className="text-xs underline-offset-4 hover:underline" href="#">
+            <Link className="text-xs underline-offset-4 hover:underline" href="https://discord.gg/Bq7nSHtAM3" target="_blank" rel="noreferrer">
               Discord
             </Link>
           </nav>
