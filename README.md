@@ -29,7 +29,7 @@ Joedoldel adalah aplikasi berbasis Laravel untuk mengelola channel YouTube, mens
    - Unduh dan install [PHP](https://windows.php.net/download/)
    - Install [Composer](https://getcomposer.org/download/)
    - Install [Node.js](https://nodejs.org/)
-   - Pasang [Git](https://git-scm.com/download/windows)
+   - Install [Git](https://git-scm.com/download/windows)
 
 2. Clone repositori:
 
