@@ -1,10 +1,10 @@
-# JoeDoldel - Sistem Manajemen Kanal YouTube
+# Joedoldel - Pembasmi Spam Komen YouTube
 
-JoeDoldel adalah aplikasi berbasis Laravel untuk mengelola kanal YouTube, mensinkronkan video dan komentar, serta menangani pembersihan spam secara otomatis. Sistem ini menyediakan fungsionalitas untuk memantau beberapa kanal YouTube, mensinkronkan video dan komentar mereka, serta menjaga bagian komentar tetap bersih dengan menyaring spam.
+Joedoldel adalah aplikasi berbasis Laravel untuk mengelola channel YouTube, mensinkronkan video dan komentar, serta menangani pembersihan spam secara otomatis. Sistem ini menyediakan fungsionalitas untuk memantau beberapa channel YouTube, mensinkronkan video dan komentar mereka, serta menjaga bagian komentar tetap bersih dengan menyaring spam judol.
 
 ## Fitur Utama
 
-- Sinkronisasi Kanal YouTube
+- Sinkronisasi channel YouTube
 - Pengambilan konten video otomatis
 - Sinkronisasi dan pengelolaan komentar
 - Deteksi dan pembersihan spam
@@ -26,15 +26,15 @@ JoeDoldel adalah aplikasi berbasis Laravel untuk mengelola kanal YouTube, mensin
 
 1. Instalasi:
 
-   - Unduh dan pasang [PHP](https://windows.php.net/download/)
-   - Pasang [Composer](https://getcomposer.org/download/)
-   - Pasang [Node.js](https://nodejs.org/)
+   - Unduh dan install [PHP](https://windows.php.net/download/)
+   - Install [Composer](https://getcomposer.org/download/)
+   - Install [Node.js](https://nodejs.org/)
    - Pasang [Git](https://git-scm.com/download/windows)
 
 2. Clone repositori:
 
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/Edqe14/joedoldel.git
    cd joedoldel
    ```
 
@@ -65,7 +65,7 @@ JoeDoldel adalah aplikasi berbasis Laravel untuk mengelola kanal YouTube, mensin
 2. Clone repositori:
 
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/Edqe14/joedoldel.git
    cd joedoldel
    ```
 
@@ -115,11 +115,6 @@ JoeDoldel adalah aplikasi berbasis Laravel untuk mengelola kanal YouTube, mensin
 
    ```bash
    php artisan migrate
-   ```
-
-2. (Opsional) Isi database dengan data awal:
-   ```bash
-   php artisan db:seed
    ```
 
 ## Menjalankan Aplikasi
