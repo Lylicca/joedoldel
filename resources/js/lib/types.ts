@@ -41,3 +41,12 @@ export type Comment = {
   updated_at: string;
   video_id: number;
 };
+
+export type BlockedWord = {
+  category: string | null;
+  created_at: string;
+  id: number;
+  updated_at: string;
+  weight: number;
+  word: string;
+}

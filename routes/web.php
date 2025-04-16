@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlockedWordsController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
@@ -23,6 +24,9 @@ Route::middleware(['auth'])->group(function () {
 
   Route::delete('comments/{comment}', [CommentController::class, 'destroy'])
     ->name('comments.destroy');
+
+  Route::resource('blocked-words', BlockedWordsController::class)
+    ->only(['index', 'store', 'update', 'destroy']);
 });
 
 Route::get('login', [AuthController::class, 'login'])->name('login');

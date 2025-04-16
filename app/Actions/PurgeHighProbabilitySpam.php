@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Video;
 use App\Services\YoutubeService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PurgeHighProbabilitySpam
 {
@@ -38,7 +39,8 @@ class PurgeHighProbabilitySpam
         }
 
         // Delete the comment from YouTube
-        $this->service->setModerationStatus($comment->comment_id, $rejected ? 'rejected' : 'heldForReview');
+        $res = $this->service->setModerationStatus($comment->comment_id, $rejected ? 'rejected' : 'heldForReview');
+        usleep(100000); // Sleep for 100ms to avoid hitting the API rate limit
       }
 
       // Mark the comments as removed in the database

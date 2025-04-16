@@ -65,9 +65,14 @@ class VideoController extends Controller
         ->with('error', 'Video not found.');
     }
 
-    $purged = (new PurgeHighProbabilitySpam($user->google_token))->execute($video->video_id);
+    [
+      'taken_down' => $taken_down,
+      'held_for_review' => $held_for_review,
+    ] = (new PurgeHighProbabilitySpam($user->google_token))->execute($video->video_id);
 
     Cache::forget("video_comments_{$video->id}");
+
+    $purged = $taken_down + $held_for_review;
 
     return redirect()
       ->back()

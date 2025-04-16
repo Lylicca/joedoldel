@@ -13,7 +13,6 @@ return new class extends Migration
   public function up(): void
   {
     $words = [
-      'gacor',
       'casino',
       'poker',
       'judi',
