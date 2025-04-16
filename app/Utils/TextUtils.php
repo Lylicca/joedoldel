@@ -27,7 +27,7 @@ class TextUtils
 
     if ($text !== $normalizedText) {
       // Big chance of spam if the text has diacritics/special characters.
-      $probability += 0.25;
+      $probability += 0.5;
     }
 
     $normalizedText = preg_replace('/\p{Mn}/u', '', $normalizedText);
@@ -55,10 +55,6 @@ class TextUtils
           }
         }
       }
-    }
-
-    if ($probability >= 0.5) {
-      return min(1.0, $probability);
     }
 
     // Repeating characters detection

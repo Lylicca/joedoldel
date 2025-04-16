@@ -74,6 +74,7 @@ class AuthController extends Controller
     }
 
     $user->update([
+      'name' => $googleUser->getName(),
       'google_token' => $googleUser->token,
       'google_refresh_token' => $googleUser->refreshToken ?? $user->google_refresh_token,
       'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn),

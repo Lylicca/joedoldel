@@ -65,6 +65,14 @@
       "npm run build:ssr",
       "Composer\\Config::disableProcessTimeout",
       "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#ba34eb\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"php artisan inertia:start-ssr\" \"php artisan schedule:work\" --names=server,queue,logs,ssr,scheduler"
+    ],
+    "start": [
+      "Composer\\Config::disableProcessTimeout",
+      "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#ba34eb\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"php artisan schedule:work\" --names=server,queue,logs,scheduler"
+    ],
+    "setup": [
+      "npm run build:ssr",
+      "@php artisan migrate"
     ]
   },
   "extra": {
