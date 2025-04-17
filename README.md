@@ -22,85 +22,22 @@ Joedoldel adalah aplikasi berbasis Laravel untuk mengelola channel YouTube, mens
 
 ## Cara Instalasi
 
-### Windows
+1. Download Laravel Herd [disini](https://herd.laravel.com/)
 
-1. Instalasi:
+2. Download zip release [disini](https://github.com/Lylicca/joedoldel/releases/download/v1.0.0/joedoldel.zip) & ekstrak
 
-   - Unduh dan install [PHP](https://windows.php.net/download/)
-   - Install [Composer](https://getcomposer.org/download/)
-   - Install [Node.js](https://nodejs.org/)
-   - Install [Git](https://git-scm.com/download/windows)
+3. Buka `cmd` di folder hasil ekstrak
 
-2. Clone repositori:
+4. Instal dependensi dengan Composer:
 
-   ```bash
-   git clone https://github.com/Edqe14/joedoldel.git
-   cd joedoldel
-   ```
-
-3. Instalasi dependensi PHP:
-
-   ```bash
-   composer install
-   ```
-
-4. Instalasi dependensi JavaScript:
-   ```bash
-   npm install
-   ```
-
-### Linux/macOS
-
-1. Instalasi:
-
-   ```bash
-   # Ubuntu/Debian
-   sudo apt update
-   sudo apt install php php-cli php-mbstring php-xml php-sqlite3 nodejs npm
-
-   # macOS (menggunakan Homebrew)
-   brew install php composer node
-   ```
-
-2. Clone repositori:
-
-   ```bash
-   git clone https://github.com/Edqe14/joedoldel.git
-   cd joedoldel
-   ```
-
-3. Instalasi dependensi PHP:
-
-   ```bash
-   composer install
-   ```
-
-4. Instalasi dependensi JavaScript:
-   ```bash
-   npm install
-   ```
+  ```bash
+  composer install
+  composer setup
+  ```
 
 ## Konfigurasi
 
-1. Copy file `.env.example` ke `.env`:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Generate key aplikasi:
-
-   ```bash
-   php artisan key:generate
-   ```
-
-3. Konfigurasi database di `.env`:
-
-   ```
-   DB_CONNECTION=sqlite
-   ```
-
-4. Pengaturan kredensial YouTube API:
+1. Pengaturan kredensial YouTube API:
    - Dapatkan kredensial dari [Google Cloud Console](https://console.cloud.google.com/)
    - Tambahkan ke berkas `.env`:
      ```
@@ -109,21 +46,11 @@ Joedoldel adalah aplikasi berbasis Laravel untuk mengelola channel YouTube, mens
      GOOGLE_REDIRECT_URI=your-redirect-uri
      ```
 
-## Pengaturan Database
+## Menjalankan Aplikasi di `cmd`
 
-1. Jalankan migrasi:
-
-   ```bash
-   php artisan migrate
-   ```
-
-## Menjalankan Aplikasi
-
-1. Mulai server lokal:
-
-   ```bash
-   composer dev
-   ```
+```bash
+composer start
+```
 
 ## Cara Berkontribusi
 
