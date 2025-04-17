@@ -17,6 +17,10 @@ class ChannelController extends Controller
     $user = Auth::user();
     $channel = Channel::where('channel_id', $channel)->firstOrFail();
 
+    if ($channel->user_id !== $user->id) {
+      return redirect()->back()->with('error', 'You do not have permission to view this channel.');
+    }
+
     return Inertia::render('channels/show', [
       'channel' => $channel,
       'videos' => Inertia::defer(function () use ($channel, $user) {

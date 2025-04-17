@@ -19,6 +19,12 @@ class VideoController extends Controller
       ->with('channel')
       ->firstOrFail();
 
+    if ($video->channel->user_id !== $user->id) {
+      return redirect()
+        ->back()
+        ->with('error', 'You do not have permission to view this video.');
+    }
+
     return Inertia::render('video/show', [
       'video' => $video,
       'channel' => $video->channel,
@@ -63,6 +69,12 @@ class VideoController extends Controller
       return redirect()
         ->back()
         ->with('error', 'Video not found.');
+    }
+
+    if ($video->channel->user_id !== $user->id) {
+      return redirect()
+        ->back()
+        ->with('error', 'You do not have permission to purge spam from this video.');
     }
 
     [

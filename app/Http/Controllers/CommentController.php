@@ -13,13 +13,17 @@ class CommentController extends Controller
   public function destroy(string $id)
   {
     try {
-      $user = Auth::user();
-      $service = new YoutubeService($user->google_token);
-
       $comment = Comment::find($id);
       if (!$comment) {
         return redirect()->back()->with('error', 'Comment not found.');
       }
+
+      $user = Auth::user();
+      if ($comment->channel->user_id !== $user->id) {
+        return redirect()->back()->with('error', 'You do not have permission to delete this comment.');
+      }
+
+      $service = new YoutubeService($user->google_token);
 
       DB::transaction(function () use ($comment, $service) {
         // Delete the comment from YouTube
