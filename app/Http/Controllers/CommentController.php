@@ -7,19 +7,20 @@ use App\Services\YoutubeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CommentController extends Controller
 {
   public function destroy(string $id)
   {
     try {
-      $comment = Comment::find($id);
+      $comment = Comment::with(['video', 'video.channel'])->find($id);
       if (!$comment) {
         return redirect()->back()->with('error', 'Comment not found.');
       }
 
       $user = Auth::user();
-      if ($comment->channel->user_id !== $user->id) {
+      if ($comment->video->channel->user_id !== $user->id) {
         return redirect()->back()->with('error', 'You do not have permission to delete this comment.');
       }
 
@@ -36,7 +37,7 @@ class CommentController extends Controller
 
       return redirect()->back()->with('success', 'Comment deleted successfully.');
     } catch (\Exception $e) {
-      report($e);
+      Log::error($e);
       return redirect()->back()->with('error', 'Failed to delete comment. Please try again.');
     }
   }
