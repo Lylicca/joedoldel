@@ -24,7 +24,11 @@ Joedoldel adalah aplikasi berbasis Laravel untuk mengelola channel YouTube, mens
 
 1. Download Laravel Herd [disini](https://herd.laravel.com/)
 
-2. Download zip release [disini](https://github.com/Lylicca/joedoldel/releases/download/v1.0.0/joedoldel.zip) & ekstrak
+2. Download/clone repository ini
+
+   ```bash
+   git clone https://github.com/Lylicca/joedoldel.git
+   ```
 
 3. Buka `cmd` di folder hasil ekstrak
 

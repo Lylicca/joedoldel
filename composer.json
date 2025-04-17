@@ -73,7 +73,8 @@
     "setup": [
       "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
       "@php artisan key:generate --ansi",
-      "@php artisan migrate --graceful --ansi"
+      "@php artisan migrate --graceful --ansi",
+      "npm run build"
     ]
   },
   "extra": {
